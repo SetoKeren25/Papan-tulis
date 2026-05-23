@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-<title>Glass Whiteboard Pro</title>
+<title>Whiteboard AI Smooth</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 
@@ -29,7 +29,9 @@ html,body{
     width:100%;
     height:100%;
     overflow:hidden;
+
     font-family:'Inter',sans-serif;
+
     background:
     radial-gradient(circle at top left,#334155 0%,transparent 30%),
     radial-gradient(circle at bottom right,#2563eb 0%,transparent 30%),
@@ -41,7 +43,7 @@ body{
     flex-direction:column;
 }
 
-/* ===== TOP BAR ===== */
+/* ===== TOOLBAR ===== */
 
 .toolbar{
     position:fixed;
@@ -49,23 +51,63 @@ body{
     left:50%;
     transform:translateX(-50%);
     z-index:20;
-
     display:flex;
     align-items:center;
     gap:14px;
-
     padding:14px 18px;
-
     border-radius:28px;
-
-    background:var(--glass);
-
+    background:rgba(255,255,255,0.08);
     backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,0.15);
+    box-shadow:0 8px 30px rgba(0,0,0,.35);
+    flex-wrap:wrap;
+    
+    /* Animasi Tirai Naik Turun */
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
 
-    border:1px solid var(--border);
+/* Class saat toolbar disembunyikan */
+.toolbar.is-hidden {
+    /* Menarik toolbar ke atas melewati batas layar */
+    transform: translate(-50%, calc(-100% - 20px));
+}
 
-    box-shadow:var(--shadow);
+/* ===== TUAS TIRAI (TOGGLE) ===== */
+.toolbar-toggle {
+    position: absolute;
+    bottom: -32px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-top: none;
+    border-radius: 0 0 20px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 20px rgba(0,0,0,.25);
+}
+
+.toolbar-toggle:hover {
+    background: rgba(255, 255, 255, 0.25);
+    height: 36px; /* Memberi efek tertarik ke bawah saat dihover */
+    bottom: -36px;
+}
+
+.toolbar-toggle span {
+    transition: transform 0.4s ease;
+}
+
+/* Memutar arah panah saat tersembunyi */
+.toolbar.is-hidden .toolbar-toggle span {
+    transform: rotate(180deg);
 }
 
 /* ===== BUTTON ===== */
@@ -73,67 +115,50 @@ body{
 .tool-btn{
     width:58px;
     height:58px;
-
     border:none;
     outline:none;
-
     cursor:pointer;
-
     border-radius:20px;
-
     background:rgba(255,255,255,0.12);
-
     color:white;
-
     font-size:28px;
-
-    transition:0.2s ease;
-
     display:flex;
     align-items:center;
     justify-content:center;
-
+    transition:.2s ease;
     box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.08),
+    inset 0 1px 0 rgba(255,255,255,.08),
     0 4px 14px rgba(0,0,0,.25);
 }
 
 .tool-btn:hover{
     transform:translateY(-2px);
-    background:rgba(255,255,255,0.18);
+    background:rgba(255,255,255,.18);
 }
 
 .tool-btn:active{
     transform:scale(.92);
 }
 
-/* ===== COLOR PICKER ===== */
+/* ===== SELECT ===== */
 
-.color-wrap{
-    width:58px;
-    height:58px;
-
-    overflow:hidden;
-
-    border-radius:20px;
-
-    border:2px solid rgba(255,255,255,0.2);
-
-    box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.1),
-    0 4px 14px rgba(0,0,0,.25);
-}
-
-.color-picker{
-    width:120%;
-    height:120%;
-    margin:-10%;
+select{
+    height:48px;
     border:none;
-    cursor:pointer;
-    background:none;
+    outline:none;
+    padding:0 14px;
+    border-radius:14px;
+    background:rgba(255,255,255,.12);
+    color:white;
+    font-size:15px;
+    backdrop-filter:blur(10px);
 }
 
-/* ===== RANGE ===== */
+select option{
+    color:black;
+}
+
+/* ===== SLIDER ===== */
 
 .slider-box{
     display:flex;
@@ -144,7 +169,7 @@ body{
 }
 
 .slider-label{
-    font-size:12px;
+    font-size:13px;
     opacity:.8;
 }
 
@@ -161,61 +186,34 @@ canvas{
     display:block;
     touch-action:none;
     cursor:crosshair;
+    background:#0f172a;
 }
 
-/* ===== TITLE ===== */
+/* ===== HIDDEN ===== */
 
-.logo{
-    position:fixed;
-    top:24px;
-    left:28px;
-    z-index:10;
-
-    color:white;
-
-    font-size:22px;
-    font-weight:700;
-    letter-spacing:.5px;
-
-    text-shadow:0 4px 10px rgba(0,0,0,.4);
-}
-
-.logo span{
-    opacity:.65;
-    font-weight:500;
+.hidden-input{
+    display:none;
 }
 
 /* ===== MOBILE ===== */
 
-@media(max-width:700px){
-
+@media(max-width:800px){
     .toolbar{
-        width:95%;
+        width:96%;
         justify-content:center;
         gap:10px;
         padding:12px;
-        border-radius:24px;
     }
-
     .tool-btn{
         width:52px;
         height:52px;
         font-size:24px;
     }
-
     .slider-box{
         min-width:90px;
     }
-
     .range{
         width:90px;
-    }
-
-    .logo{
-        font-size:18px;
-        top:100px;
-        left:50%;
-        transform:translateX(-50%);
     }
 }
 
@@ -223,256 +221,380 @@ canvas{
 </head>
 <body>
 
-<div class="logo">
-    Whiteboard <span>Ultra</span>
-</div>
+<div class="toolbar" id="toolbar">
+    <button class="tool-btn" id="undo" title="Undo">↩️</button>
+    <button class="tool-btn" id="redo" title="Redo">↪️</button>
+    <button class="tool-btn" id="clear" title="Hapus Semua">🗑️</button>
+    <button class="tool-btn" id="penBtn" title="Warna Pena">✏️</button>
+    <button class="tool-btn" id="bgBtn" title="Warna Background">🎨</button>
 
-<div class="toolbar">
+    <!-- BRUSH -->
+    <select id="brushType">
+        <option value="pen">🖊️ Pulpen</option>
+        <option value="pencil">✏️ Pensil</option>
+        <option value="brush">🖌️ Kuas</option>
+        <option value="marker">🧴 Marker</option>
+        <option value="neon">🌈 Neon</option>
+    </select>
 
-    <button class="tool-btn" id="undo">↩️</button>
-
-    <button class="tool-btn" id="redo">↪️</button>
-
-    <button class="tool-btn" id="clear">🗑️</button>
-
-    <div class="color-wrap">
-        <input type="color" id="color" class="color-picker" value="#ffffff">
-    </div>
-
+    <!-- SIZE -->
     <div class="slider-box">
-        <div class="slider-label">Brush Size</div>
-        <input type="range" min="1" max="30" value="4" id="size" class="range">
+        <div class="slider-label">🖌️ Size</div>
+        <input type="range" min="1" max="40" value="4" id="size" class="range">
     </div>
 
+    <!-- TUAS TIRAI -->
+    <div class="toolbar-toggle" id="toolbarToggle" title="Sembunyikan/Tampilkan Toolbar">
+        <span>▲</span>
+    </div>
 </div>
+
+<input type="color" id="color" class="hidden-input" value="#ffffff">
+<input type="color" id="bgColor" class="hidden-input" value="#0f172a">
 
 <canvas id="canvas"></canvas>
 
 <script>
-
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
 const undoBtn = document.getElementById("undo");
 const redoBtn = document.getElementById("redo");
 const clearBtn = document.getElementById("clear");
-
+const penBtn = document.getElementById("penBtn");
+const bgBtn = document.getElementById("bgBtn");
 const colorPicker = document.getElementById("color");
+const bgColorPicker = document.getElementById("bgColor");
 const sizePicker = document.getElementById("size");
+const brushType = document.getElementById("brushType");
+
+// Script Toggle Tirai Toolbar
+const toolbar = document.getElementById("toolbar");
+const toolbarToggle = document.getElementById("toolbarToggle");
+
+toolbarToggle.addEventListener("click", () => {
+    toolbar.classList.toggle("is-hidden");
+});
 
 let drawing = false;
-
 let paths = [];
 let redoStack = [];
+let backgroundColor = "#0f172a";
 
-/* ===== HD QUALITY ===== */
+// Variabel untuk fitur Zoom dan Pan
+let scale = 1;
+const minScale = 0.2;
+const maxScale = 10;
+let offsetX = 0;
+let offsetY = 0;
 
+// Variabel deteksi Multi-Touch
+let initialPinchDistance = null;
+let initialScale = 1;
+let pinchCenter = {x: 0, y: 0};
+let dpr = 1;
+
+/* ===== HD ===== */
 function resizeCanvas(){
-
-    const ratio = Math.max(window.devicePixelRatio || 1, 2);
-
-    canvas.width = window.innerWidth * ratio;
-    canvas.height = window.innerHeight * ratio;
-
+    dpr = Math.max(window.devicePixelRatio || 1, 2);
+    canvas.width = window.innerWidth * dpr;
+    canvas.height = window.innerHeight * dpr;
     canvas.style.width = window.innerWidth + "px";
     canvas.style.height = window.innerHeight + "px";
-
-    ctx.setTransform(ratio,0,0,ratio,0,0);
-
     redraw();
 }
 
-window.addEventListener("resize",resizeCanvas);
-
+window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
-/* ===== POSITION ===== */
-
+/* ===== POSITION (Diperbarui dengan kalkulasi Zoom) ===== */
 function getPos(e){
-
     const rect = canvas.getBoundingClientRect();
+    let clientX, clientY;
 
-    if(e.touches){
-
-        return{
-            x:e.touches[0].clientX - rect.left,
-            y:e.touches[0].clientY - rect.top
-        };
+    if(e.touches && e.touches.length > 0){
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+    } else {
+        clientX = e.clientX;
+        clientY = e.clientY;
     }
 
-    return{
-        x:e.clientX - rect.left,
-        y:e.clientY - rect.top
+    return {
+        x: ((clientX - rect.left) - offsetX) / scale,
+        y: ((clientY - rect.top) - offsetY) / scale
     };
 }
 
+/* ===== AUTO PEN ===== */
+function updatePenColor(bg){
+    const hex = bg.replace("#","");
+    const r = parseInt(hex.substr(0,2),16);
+    const g = parseInt(hex.substr(2,2),16);
+    const b = parseInt(hex.substr(4,2),16);
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+
+    if(brightness > 160){
+        colorPicker.value = "#000000";
+    }else{
+        colorPicker.value = "#ffffff";
+    }
+}
+
 /* ===== DRAW ===== */
-
 function startDraw(x,y){
-
     drawing = true;
-
     const path = {
-        color:colorPicker.value,
-        size:parseInt(sizePicker.value),
-        points:[{x,y}]
+        color: colorPicker.value,
+        size: parseInt(sizePicker.value),
+        type: brushType.value,
+        points: [{x,y}]
     };
-
     paths.push(path);
-
     redoStack = [];
 }
 
 function moveDraw(x,y){
-
     if(!drawing) return;
-
     const current = paths[paths.length - 1];
-
     current.points.push({x,y});
-
     redraw();
 }
 
 function stopDraw(){
-
     drawing = false;
 }
 
-/* ===== ULTRA SMOOTH CURVE ===== */
+/* ===== BRUSH STYLE ===== */
+function applyBrush(type, size, color){
+    ctx.shadowBlur = 0;
+    ctx.globalAlpha = 1;
 
-function drawSmooth(points,color,size){
+    if(type === "pen"){
+        ctx.lineWidth = size;
+    } else if(type === "pencil"){
+        ctx.lineWidth = size * 0.9;
+        ctx.globalAlpha = 0.55;
+    } else if(type === "brush"){
+        ctx.lineWidth = size * 1.6;
+        ctx.shadowBlur = size * 1.2;
+        ctx.shadowColor = color;
+    } else if(type === "marker"){
+        ctx.lineWidth = size * 2;
+        ctx.globalAlpha = 0.35;
+    } else if(type === "neon"){
+        ctx.lineWidth = size;
+        ctx.shadowBlur = size * 3;
+        ctx.shadowColor = color;
+    }
+}
 
+/* ===== SMOOTH ===== */
+function drawSmooth(points, color, size, type){
     if(points.length < 2) return;
 
     ctx.beginPath();
-
     ctx.strokeStyle = color;
-    ctx.lineWidth = size;
-
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
 
-    ctx.shadowBlur = size * 0.6;
-    ctx.shadowColor = color;
+    applyBrush(type, size, color);
 
-    ctx.moveTo(points[0].x,points[0].y);
+    let smoothPoints = [];
+    const smoothing = size <= 3 ? 0.7 : size <= 8 ? 0.6 : 0.5;
 
-    for(let i=1;i<points.length-1;i++){
+    smoothPoints.push(points[0]);
 
-        const xc = (points[i].x + points[i+1].x)/2;
-        const yc = (points[i].y + points[i+1].y)/2;
-
-        ctx.quadraticCurveTo(
-            points[i].x,
-            points[i].y,
-            xc,
-            yc
-        );
+    for(let i = 1; i < points.length; i++){
+        const prev = smoothPoints[smoothPoints.length - 1];
+        const current = points[i];
+        smoothPoints.push({
+            x: prev.x + (current.x - prev.x) * smoothing,
+            y: prev.y + (current.y - prev.y) * smoothing
+        });
     }
 
-    ctx.lineTo(
-        points[points.length-1].x,
-        points[points.length-1].y
-    );
+    ctx.moveTo(smoothPoints[0].x, smoothPoints[0].y);
 
+    for(let i = 1; i < smoothPoints.length - 1; i++){
+        const xc = (smoothPoints[i].x + smoothPoints[i+1].x) / 2;
+        const yc = (smoothPoints[i].y + smoothPoints[i+1].y) / 2;
+        ctx.quadraticCurveTo(smoothPoints[i].x, smoothPoints[i].y, xc, yc);
+    }
+
+    ctx.lineTo(smoothPoints[smoothPoints.length - 1].x, smoothPoints[smoothPoints.length - 1].y);
     ctx.stroke();
 
     ctx.shadowBlur = 0;
+    ctx.globalAlpha = 1;
 }
 
-/* ===== REDRAW ===== */
-
+/* ===== REDRAW (Diperbarui dengan Transformasi Kamera) ===== */
 function redraw(){
+    // Reset canvas transform ke base pixel ratio
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    ctx.clearRect(0,0,canvas.width,canvas.height);
+    // Bersihkan background
+    ctx.fillStyle = backgroundColor;
+    ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
 
+    // Aplikasikan status Panning & Zooming
+    ctx.translate(offsetX, offsetY);
+    ctx.scale(scale, scale);
+
+    // Gambar ulang setiap garis
     for(const path of paths){
-
-        drawSmooth(
-            path.points,
-            path.color,
-            path.size
-        );
+        drawSmooth(path.points, path.color, path.size, path.type);
     }
 }
 
-/* ===== MOUSE ===== */
+/* ===== ZOOM MENGGUNAKAN SCROLL MOUSE ===== */
+canvas.addEventListener("wheel", (e) => {
+    e.preventDefault(); // Mencegah scrolling halaman
 
-canvas.addEventListener("mousedown",e=>{
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
 
-    const p = getPos(e);
+    const zoomIntensity = 0.1;
+    const wheel = e.deltaY < 0 ? 1 : -1;
+    const zoomFactor = Math.exp(wheel * zoomIntensity);
 
-    startDraw(p.x,p.y);
-});
+    let newScale = scale * zoomFactor;
+    newScale = Math.max(minScale, Math.min(maxScale, newScale));
 
-canvas.addEventListener("mousemove",e=>{
+    // Menyesuaikan titik tengah saat zoom
+    offsetX = mouseX - (mouseX - offsetX) * (newScale / scale);
+    offsetY = mouseY - (mouseY - offsetY) * (newScale / scale);
 
-    const p = getPos(e);
+    scale = newScale;
+    redraw();
+}, {passive: false});
 
-    moveDraw(p.x,p.y);
-});
+/* ===== MENGHITUNG JARAK 2 JARI ===== */
+function getDistance(touches) {
+    const dx = touches[0].clientX - touches[1].clientX;
+    const dy = touches[0].clientY - touches[1].clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+}
 
-canvas.addEventListener("mouseup",stopDraw);
-
-canvas.addEventListener("mouseleave",stopDraw);
-
-/* ===== TOUCH ===== */
-
-canvas.addEventListener("touchstart",e=>{
-
+/* ===== EVENT SENTUH (Touch) ===== */
+canvas.addEventListener("touchstart", e => {
     e.preventDefault();
 
-    const p = getPos(e);
+    if (e.touches.length >= 2) {
+        // Mode Zoom & Pan (2 Jari atau lebih)
+        drawing = false;
+        initialPinchDistance = getDistance(e.touches);
+        initialScale = scale;
+        
+        // Titik tengah cubitan
+        const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+        const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+        pinchCenter = {x: cx, y: cy};
+    } else if (e.touches.length === 1) {
+        // Mode Menggambar (1 Jari)
+        const p = getPos(e);
+        startDraw(p.x, p.y);
+    }
+}, {passive: false});
 
-    startDraw(p.x,p.y);
-
-},{passive:false});
-
-canvas.addEventListener("touchmove",e=>{
-
+canvas.addEventListener("touchmove", e => {
     e.preventDefault();
 
+    if (e.touches.length >= 2 && initialPinchDistance) {
+        // Proses Zoom & Pan berjalan
+        const currentDistance = getDistance(e.touches);
+        const zoomFactor = currentDistance / initialPinchDistance;
+        let newScale = initialScale * zoomFactor;
+        newScale = Math.max(minScale, Math.min(maxScale, newScale));
+
+        const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+        const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+
+        // Proses Pan (Geser)
+        const dx = cx - pinchCenter.x;
+        const dy = cy - pinchCenter.y;
+        offsetX += dx;
+        offsetY += dy;
+
+        // Proses Zoom terpusat ke jari
+        const rect = canvas.getBoundingClientRect();
+        const pointX = cx - rect.left;
+        const pointY = cy - rect.top;
+
+        offsetX = pointX - (pointX - offsetX) * (newScale / scale);
+        offsetY = pointY - (pointY - offsetY) * (newScale / scale);
+
+        scale = newScale;
+        pinchCenter = {x: cx, y: cy};
+        redraw();
+    } else if (e.touches.length === 1 && drawing) {
+        // Proses Menggambar
+        const p = getPos(e);
+        moveDraw(p.x, p.y);
+    }
+}, {passive: false});
+
+canvas.addEventListener("touchend", e => {
+    e.preventDefault();
+    if (e.touches.length < 2) {
+        initialPinchDistance = null;
+    }
+    if (e.touches.length === 0) {
+        stopDraw();
+    }
+});
+
+/* ===== EVENT MOUSE ===== */
+canvas.addEventListener("mousedown", e => {
     const p = getPos(e);
+    startDraw(p.x, p.y);
+});
 
-    moveDraw(p.x,p.y);
+canvas.addEventListener("mousemove", e => {
+    const p = getPos(e);
+    moveDraw(p.x, p.y);
+});
 
-},{passive:false});
+canvas.addEventListener("mouseup", stopDraw);
+canvas.addEventListener("mouseleave", stopDraw);
 
-canvas.addEventListener("touchend",stopDraw);
+/* ===== BUTTON ===== */
+penBtn.onclick = () => colorPicker.click();
+bgBtn.onclick = () => bgColorPicker.click();
+
+bgColorPicker.addEventListener("input", (e) => {
+    backgroundColor = e.target.value;
+    updatePenColor(backgroundColor);
+    redraw();
+});
 
 /* ===== TOOLS ===== */
-
-undoBtn.onclick = ()=>{
-
+undoBtn.onclick = () => {
     if(paths.length){
-
         redoStack.push(paths.pop());
-
         redraw();
     }
 };
 
-redoBtn.onclick = ()=>{
-
+redoBtn.onclick = () => {
     if(redoStack.length){
-
         paths.push(redoStack.pop());
-
         redraw();
     }
 };
 
-clearBtn.onclick = ()=>{
-
+clearBtn.onclick = () => {
     paths = [];
-
     redoStack = [];
-
+    // Reset Zoom saat layar dibersihkan (opsional)
+    scale = 1;
+    offsetX = 0;
+    offsetY = 0;
     redraw();
 };
 
 </script>
-
 </body>
 </html>
